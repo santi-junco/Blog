@@ -36,6 +36,7 @@ DJANGO_APPS = [
 
 LOCAL_APPS = [
     'apps.usuario',
+    'apps.articulo',
 ]
 
 THIRD_APPS = [
