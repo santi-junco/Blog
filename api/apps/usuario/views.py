@@ -1,6 +1,6 @@
 from rest_framework.generics import *
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import IsAuthenticated
 from .models import *
 from .serializers import *
 from .excepciones import *
@@ -10,7 +10,6 @@ from django.contrib.auth.hashers import make_password
 class UsuarioCreateApiView(CreateAPIView):
     queryset = Usuario.objects.all()
     serializer_class = UsuarioSerializer
-    permission_classes = [AllowAny]
     
     def perform_create(self, serializer):
         try:
@@ -51,11 +50,13 @@ class UsuarioListApiView(ListAPIView):
 class UsuarioUpdateApiView(UpdateAPIView):
     queryset = Usuario.objects.all()
     serializer_class = UsuarioSerializer
+    permission_classes = [IsAuthenticated]
 
 # Eliminar usuario
 class UsuairoDeleteApiView(DestroyAPIView):
     queryset = Usuario.objects.all()
     serializer_class = UsuarioSerializer
+    permission_classes = [IsAuthenticated]
 
 # Obtener un usuario
 class UsuarioRetriveApiView(RetrieveAPIView):
