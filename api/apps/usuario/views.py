@@ -1,13 +1,16 @@
 from rest_framework.generics import *
 from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
 from .models import *
 from .serializers import *
 from .excepciones import *
 from django.contrib.auth.hashers import make_password
+
 # Creacion de usuario
 class UsuarioCreateApiView(CreateAPIView):
     queryset = Usuario.objects.all()
     serializer_class = UsuarioSerializer
+    permission_classes = [AllowAny]
     
     def perform_create(self, serializer):
         try:
