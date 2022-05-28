@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 class Usuario(AbstractUser):
-    username = models.CharField(max_length=50, null=False, blank=False, unique=True)
+    username = models.CharField(max_length=50, null=True, blank=True, unique=True)
     email = models.EmailField(unique=True)
     userName = models.CharField(max_length=50, null=True)
 

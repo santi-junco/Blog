@@ -19,6 +19,6 @@ from django.contrib.auth import login
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('login/', ),
+    # path('login/', ),
     path('api/usuario/', include('apps.usuario.urls')),
 ]

@@ -39,6 +39,7 @@ LOCAL_APPS = [
 
 THIRD_APPS = [
     'rest_framework',
+    'rest_framework_simplejwt',
 ]
 
 INSTALLED_APPS = DJANGO_APPS + LOCAL_APPS + THIRD_APPS
@@ -74,6 +75,16 @@ TEMPLATES = [
 WSGI_APPLICATION = 'blog.wsgi.application'
 
 AUTH_USER_MODEL ='usuario.Usuario'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES':(
+        'rest_framework.permissions.AllowAny',
+        # 'rest_framework.permissions.IsAuthenticated'
+    )
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
