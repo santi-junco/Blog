@@ -15,9 +15,11 @@ CATEGORIA_CHOICES = (
 class Articulo(models.Model):
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, null=False)
     titulo = models.CharField(max_length=150, null=False, blank=False)
+    descripcion = models.CharField(max_length=300, null=False, blank=False)
     texto = models.TextField(null=False, blank=False)
     categoria = models.CharField(max_length=50, null=False, choices=CATEGORIA_CHOICES)
     estado = models.BooleanField(default=True)
+    creado = models.DateField(auto_now=True)
 
 
 class Imagenes(models.Model):

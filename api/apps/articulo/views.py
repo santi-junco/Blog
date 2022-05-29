@@ -1,6 +1,7 @@
 from rest_framework import generics, permissions
 from .models import *
 from .serializers import *
+from .excepciones import *
 
 ########################### Articulos ##############################
 # Crear articulo
@@ -8,6 +9,20 @@ class ArticuloCreateApiView(generics.CreateAPIView):
     queryset = Articulo.objects.all()
     serializer_class = ArticuloSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+    def perform_create(self, serializer):
+        articulo = serializer.save()
+        imagenes = int(self.request.data.get('imagenes', 0))
+        if imagenes > 0:
+            for imagen in range(1,imagenes+1):
+                try:
+                    Imagenes.objects.create(
+                        articulo = articulo,
+                        imagen = self.request.data.get(f'imagen{imagen}')
+                    )
+                except:
+                    raise ErrorImagen
+        return super().perform_create(serializer)
 
 # Editar articulo
 class ArticuloUpdateApiView(generics.UpdateAPIView):
@@ -24,12 +39,12 @@ class ArticuloDeleteApiView(generics.DestroyAPIView):
 # Obtener un articulo
 class ArticuloRetiveApiView(generics.RetrieveAPIView):
     queryset = Articulo.objects.all()
-    serializer_class = ArticuloSerializer
+    serializer_class = ArticuloVerSerializer
 
 # Listado de articulos
 class ArticuloListApiView(generics.ListAPIView):
-    queryset = Articulo.objects.all()
-    serializer_class = ArticuloSerializer
+    queryset = Articulo.objects.all().order_by('-creado')
+    serializer_class = ArticuloListSerializer
 
 #################### Comentario #####################
 # Crear un comentario
