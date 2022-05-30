@@ -64,3 +64,8 @@ class ComentarioDeleteApiView(generics.DestroyAPIView):
     queryset = Comentario.objects.all()
     serializer_class = ComentarioSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+
+# Hacer que solamente el creador pueda eliminar, editar un post
+# Hacer que solamente el creador pueda editar un comentario
+# Un comentario puede ser eliminado por su creador o por el creador del post
