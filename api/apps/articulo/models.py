@@ -1,6 +1,7 @@
 from django.db import models
 from django.core.validators import FileExtensionValidator
 from apps.usuario.models import Usuario
+from apps.core.models import RelacionArticuloUsuario
 
 CATEGORIA_CHOICES = (
     ('Deporte','Deporte'),
@@ -20,13 +21,25 @@ class Articulo(models.Model):
     categoria = models.CharField(max_length=50, null=False, choices=CATEGORIA_CHOICES)
     estado = models.BooleanField(default=True)
     creado = models.DateField(auto_now=True)
-
+    class Meta:
+        db_table = 'articulo_Articulo'
+        verbose_name_plural = 'Articulos'
 
 class Imagenes(models.Model):
     articulo = models.ForeignKey(Articulo, on_delete=models.CASCADE, null=False)
     imagen = models.FileField(null=False, upload_to='imagen/', validators=[FileExtensionValidator(['jpg','jpeg','PNG'])])
+    class Meta:
+        db_table = 'articulo_imagenes'
+        verbose_name_plural = 'Imagenes'
 
-class Comentario(models.Model):
-    articulo = models.ForeignKey(Articulo, on_delete=models.CASCADE, null=False)
-    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, null=False)
+class Comentario(RelacionArticuloUsuario):
     comentario = models.TextField(null=False, blank=False)
+    class Meta:
+        db_table = 'articulo_comentario'
+        verbose_name_plural = 'Comentarios'
+
+class Likes(RelacionArticuloUsuario):
+    
+    class Meta:
+        db_table = 'articulo_like'
+        verbose_name_plural = 'Likes'
