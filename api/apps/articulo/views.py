@@ -40,6 +40,24 @@ class ArticuloDeleteApiView(generics.DestroyAPIView):
     serializer_class = ArticuloSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    def delete(self, request, *args, **kwargs):
+
+        tokenJWT = request.headers['Authorization'].split()[1]
+        tokenDecoded = jwt.decode(tokenJWT, SECRET_KEY, algorithms=["HS256"])
+        user_token = tokenDecoded['user_id']
+        
+        try:
+            articulo = Articulo.objects.get(id=self.kwargs['pk'])
+        except Exception as e:
+            raise Error(str(e))
+        
+        if articulo.usuario.id == user_token:
+            articulo.delete()
+        else:
+            raise Error("No tiene permiso para eliminar el articulo")
+        
+        return JsonResponse({'mensaje':'Articulo eliminado'})
+
 # Obtener un articulo
 class ArticuloRetiveApiView(generics.RetrieveAPIView):
     queryset = Articulo.objects.all()
@@ -90,4 +108,3 @@ class ComentarioDeleteApiView(generics.DestroyAPIView):
 
 
 # Hacer que solamente el creador pueda eliminar, editar un post
-# Un comentario puede ser eliminado por su creador o por el creador del post
