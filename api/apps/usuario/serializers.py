@@ -1,6 +1,6 @@
 from dataclasses import field
 from rest_framework import serializers
-from .excepciones import *
+from apps.core.excepciones import *
 from .models import *
 from apps.articulo.models import *
 

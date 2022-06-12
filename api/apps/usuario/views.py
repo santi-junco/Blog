@@ -1,9 +1,9 @@
 from rest_framework.generics import *
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from apps.core.excepciones import *
 from .models import *
 from .serializers import *
-from .excepciones import *
 from django.contrib.auth.hashers import make_password
 
 # Creacion de usuario
@@ -57,7 +57,6 @@ class UsuarioUpdateApiView(UpdateAPIView):
         password = self.request.data.get("password", None)
         if password:
             usuario.password = make_password(password)
-            print(usuario.password)
         usuario.save()
 
 # Eliminar usuario
