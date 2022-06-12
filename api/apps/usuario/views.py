@@ -9,7 +9,7 @@ from django.contrib.auth.hashers import make_password
 # Creacion de usuario
 class UsuarioCreateApiView(CreateAPIView):
     queryset = Usuario.objects.all()
-    serializer_class = UsuarioSerializer
+    serializer_class = UsuarioCreateSerializer
     
     def perform_create(self, serializer):
         try:
@@ -17,8 +17,8 @@ class UsuarioCreateApiView(CreateAPIView):
             apellido = self.request.data['apellido']
             email = self.request.data['email']
             password = self.request.data['password']
-        except:
-            raise ErrorReguistro
+        except Exception as e:
+            raise Error(str(e))
 
         usuario = serializer.save()
         # valores del registro
@@ -43,14 +43,22 @@ class UsuarioCreateApiView(CreateAPIView):
 
 # Listado de usuarios
 class UsuarioListApiView(ListAPIView):
-    queryset = Usuario.objects.all()
+    queryset = Usuario.objects.all().order_by('id')
     serializer_class = UsuarioSerializer
+    permission_classes = [IsAuthenticated]
 
 # Edicion de usuario
 class UsuarioUpdateApiView(UpdateAPIView):
     queryset = Usuario.objects.all()
     serializer_class = UsuarioSerializer
     permission_classes = [IsAuthenticated]
+    def perform_update(self, serializer):
+        usuario = serializer.save()
+        password = self.request.data.get("password", None)
+        if password:
+            usuario.password = make_password(password)
+            print(usuario.password)
+        usuario.save()
 
 # Eliminar usuario
 class UsuairoDeleteApiView(DestroyAPIView):
@@ -61,4 +69,4 @@ class UsuairoDeleteApiView(DestroyAPIView):
 # Obtener un usuario
 class UsuarioRetriveApiView(RetrieveAPIView):
     queryset = Usuario.objects.all()
-    serializer_class = UsuarioSerializer
+    serializer_class = UsuarioVerSerializer

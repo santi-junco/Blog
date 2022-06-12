@@ -1,7 +1,11 @@
+from django.http import JsonResponse
+import jwt
 from rest_framework import generics, permissions
+from apps.usuario.excepciones import Error
 from .models import *
 from .serializers import *
 from .excepciones import *
+from blog.settings.base import SECRET_KEY
 
 ########################### Articulos ##############################
 # Crear articulo
@@ -65,7 +69,25 @@ class ComentarioDeleteApiView(generics.DestroyAPIView):
     serializer_class = ComentarioSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    def delete(self, request, *args, **kwargs):
+
+        tokenJWT = request.headers['Authorization'].split()[1]
+        tokenDecoded = jwt.decode(tokenJWT, SECRET_KEY, algorithms=["HS256"])
+        user_token = tokenDecoded['user_id']
+        
+        try:
+            comentario = Comentario.objects.get(id=self.kwargs['pk'])
+            articulo = Articulo.objects.get(id=comentario.articulo.id)
+        except Exception as e:
+            raise Error(str(e))
+        
+        if comentario.usuario.id == user_token or articulo.usuario.id == user_token:
+            comentario.delete()
+        else:
+            raise Error("No tiene permiso para eliminar el comentario")
+        
+        return JsonResponse({'mensaje':'Comentario eliminado'})        
+
 
 # Hacer que solamente el creador pueda eliminar, editar un post
-# Hacer que solamente el creador pueda editar un comentario
 # Un comentario puede ser eliminado por su creador o por el creador del post

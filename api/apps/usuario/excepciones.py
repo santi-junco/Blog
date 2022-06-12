@@ -1,6 +1,11 @@
 from rest_framework.exceptions import APIException
 
-class ErrorReguistro(APIException):
+class Error(APIException):
     status_code = 400
-    default_detail = 'Verifique que se enviaron los campos "Nombre", "Apellido", "Email" y "Password"'
-    default_code = 'Falta_informacion'
+    default_detail = 'Error'
+    default_code = 'Error'
+
+    def __init__(self, error='Error al procesar la solicitud', cod=400):
+        self.default_detail = error
+        self.status_code = cod
+        super().__init__()
