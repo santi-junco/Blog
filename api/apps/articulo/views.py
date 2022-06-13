@@ -35,16 +35,13 @@ class ArticuloUpdateApiView(generics.UpdateAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def update(self, request, *args, **kwargs):
-        user_id = user_token(request)
 
         try:
             articulo = Articulo.objects.get(id=self.kwargs['pk'])
         except Exception as e:
             raise Error(str(e))
-        print(articulo.usuario.id)
-        print('-'*50)
 
-        if user_id == articulo.usuario.id:
+        if user_token(request) == articulo.usuario:
             return super().update(request, *args, **kwargs)
         else:
             return JsonResponse({'mensaje':"No tiene permiso para editar el articulo"}, status=400)
@@ -56,20 +53,16 @@ class ArticuloDeleteApiView(generics.DestroyAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def delete(self, request, *args, **kwargs):
-
-        tokenJWT = request.headers['Authorization'].split()[1]
-        tokenDecoded = jwt.decode(tokenJWT, SECRET_KEY, algorithms=["HS256"])
-        user_token = tokenDecoded['user_id']
-        
+       
         try:
             articulo = Articulo.objects.get(id=self.kwargs['pk'])
         except Exception as e:
             raise Error(str(e))
         
-        if articulo.usuario.id == user_token:
+        if articulo.usuario == user_token(request):
             articulo.delete()
         else:
-            raise Error("No tiene permiso para eliminar el articulo")
+            raise Error("No tiene permiso para eliminar el articulo", status=400)
         
         return JsonResponse({'mensaje':'Articulo eliminado'})
 
@@ -104,9 +97,7 @@ class ComentarioDeleteApiView(generics.DestroyAPIView):
 
     def delete(self, request, *args, **kwargs):
 
-        tokenJWT = request.headers['Authorization'].split()[1]
-        tokenDecoded = jwt.decode(tokenJWT, SECRET_KEY, algorithms=["HS256"])
-        user_token = tokenDecoded['user_id']
+        user_id = user_token(request)
         
         try:
             comentario = Comentario.objects.get(id=self.kwargs['pk'])
@@ -114,10 +105,10 @@ class ComentarioDeleteApiView(generics.DestroyAPIView):
         except Exception as e:
             raise Error(str(e))
         
-        if comentario.usuario.id == user_token or articulo.usuario.id == user_token:
+        if comentario.usuario == user_id or articulo.usuario == user_id:
             comentario.delete()
         else:
-            raise Error("No tiene permiso para eliminar el comentario")
+            raise Error("No tiene permiso para eliminar el comentario", status=400)
         
         return JsonResponse({'mensaje':'Comentario eliminado'})        
 

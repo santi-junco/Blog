@@ -11,6 +11,8 @@ class ArticuloListSerializer(serializers.ModelSerializer):
     userName_autor = serializers.CharField(source='usuario.userName')
     imagen = serializers.SerializerMethodField('get_imagen')
     autor_id = serializers.IntegerField(source='usuario.id')
+    cant_comentarios = serializers.SerializerMethodField('get_comentario')
+    cant_likes = serializers.SerializerMethodField('get_likes')
     class Meta:
         model = Articulo
         fields = [
@@ -21,9 +23,19 @@ class ArticuloListSerializer(serializers.ModelSerializer):
             'creado',
             'autor_id',
             'userName_autor',
+            'cant_likes',
+            'cant_comentarios',
             'imagen'
             ]
 
+    def get_comentario(self, instance):
+        coment = instance.cant_comentario(instance)
+        return coment
+    
+    def get_likes(self, instance):
+        likes = instance.cant_likes(instance)
+        return likes
+    
     def get_imagen(self, instance):
         imagen = Imagenes.objects.filter(articulo=instance).values_list('imagen',flat=True).first()
         if imagen:
@@ -45,6 +57,8 @@ class ArticuloVerSerializer(ArticuloListSerializer):
             'categoria',
             'creado',
             'texto',
+            'cant_likes',
+            'cant_comentarios',
             'imagenes',
             'comentarios'
             ]

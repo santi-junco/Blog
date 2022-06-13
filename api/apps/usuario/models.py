@@ -10,7 +10,7 @@ class Usuario(AbstractUser):
     REQUIRED_FIELDS = ['username']
 
     def __str__(self) -> str:
-        return self.username
+        return self.id
 
     class Meta:
         db_table = 'usuario_Usuario'

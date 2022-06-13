@@ -21,6 +21,18 @@ class Articulo(models.Model):
     categoria = models.CharField(max_length=50, null=False, choices=CATEGORIA_CHOICES)
     estado = models.BooleanField(default=True)
     creado = models.DateField(auto_now=True)
+    
+    def cant_comentario(self, id_articulo):
+        coment = Comentario.objects.filter(articulo=id_articulo).count()
+        return coment
+    
+    def cant_likes(self, id_articulo):
+        likes = Likes.objects.filter(articulo=id_articulo).count()
+        return likes
+
+    def __str__(self):
+        return str(self.id)
+
     class Meta:
         db_table = 'articulo_Articulo'
         verbose_name_plural = 'Articulos'
@@ -28,17 +40,28 @@ class Articulo(models.Model):
 class Imagenes(models.Model):
     articulo = models.ForeignKey(Articulo, on_delete=models.CASCADE, null=False)
     imagen = models.FileField(null=False, upload_to='imagen/', validators=[FileExtensionValidator(['jpg','jpeg','PNG'])])
+
+    def __str__(self):
+        return str(self.id)
+
     class Meta:
         db_table = 'articulo_imagenes'
         verbose_name_plural = 'Imagenes'
 
 class Comentario(RelacionArticuloUsuario):
     comentario = models.TextField(null=False, blank=False)
+
+    def __str__(self):
+        return str(self.id)
+
     class Meta:
         db_table = 'articulo_comentario'
         verbose_name_plural = 'Comentarios'
 
 class Likes(RelacionArticuloUsuario):
+
+    def __str__(self):
+        return str(self.id)
     
     class Meta:
         db_table = 'articulo_like'
